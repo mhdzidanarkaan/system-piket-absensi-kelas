@@ -431,7 +431,7 @@ function renderRekap() {
 // ========================================
 function renderJadwalPiket() {
     const piket = getPiket(); const siswa = getSiswa(); const container = document.getElementById('piketGridContainer'); container.innerHTML = "";
-    for(let i = 1; i <= 6; i++) {
+    for(let i = 1; i <= 5; i++) {
         const idTerpilih = piket[i] || [];
         let listSiswa = idTerpilih.length === 0 ? "<div class='empty-state'>Tidak ada piket</div>" : idTerpilih.map(no => { const s = siswa.find(x => x.no === no); return s ? `<div class="piket-item mb-2">${renderAvatar(s.nama, s.foto)}<span class="piket-name">${s.nama}</span></div>` : ''; }).join('');
         container.innerHTML += `<div class="piket-card"><div class="piket-card-header"><h3>${namaHari[i]}</h3><button class="btn btn-outline btn-sm admin-only" onclick="bukaModalPiket(${i})">Atur</button></div><div class="piket-card-body">${listSiswa}</div></div>`;
