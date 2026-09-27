@@ -3,9 +3,6 @@
 // ========================================
 const API_URL = "https://script.google.com/macros/s/AKfycbxJrvl66sU41y72ZgIaKi9_cbqxmjpQd2BmmliF7H2JC3eS_3DnlCBa1y6cmQDX5eZNFA/exec";
 
-// ========================================
-// DATA KEYS
-// ========================================
 const KUNCI_SISWA = "dataSiswa";
 const KUNCI_ABSENSI = "dataAbsensi";
 const KUNCI_PIKET = "dataPiket";
@@ -15,11 +12,10 @@ const namaHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"
 const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
 // ========================================
-// FUNGSI SINKRONISASI CLOUD
+// FUNGSI SINKRONISASI CLOUD & G-DRIVE
 // ========================================
 async function syncDataFromCloud() {
     if (!API_URL || API_URL.trim() === "") return initData();
-    showToast("Sinkronisasi...", "Menghubungkan ke server...", "success");
 
     try {
         const response = await fetch(API_URL);
@@ -32,35 +28,55 @@ async function syncDataFromCloud() {
         if (cloudData[KUNCI_PIKET]) { localStorage.setItem(KUNCI_PIKET, cloudData[KUNCI_PIKET]); adaDataBaru = true; }
 
         if (adaDataBaru) {
-            showToast("Sukses", "Data berhasil ditarik dari server Google Sheets.", "success");
             renderDashboard();
-            const activeNav = document.querySelector('.nav-link.active').getAttribute('data-target');
-            jalankanFungsiHalaman(activeNav);
-        } else { 
-            initData(); 
-        }
-    } catch (e) {
-        console.error("Gagal sync:", e);
-        showToast("Mode Lokal", "Gagal menghubungi server.", "error");
-        initData();
-    }
+            const activeNavLink = document.querySelector('.nav-link.active');
+            if (activeNavLink) jalankanFungsiHalaman(activeNavLink.getAttribute('data-target'));
+        } else { initData(); }
+    } catch (e) { console.error("Gagal sync:", e); initData(); }
 }
 
 function simpanKeCloud(key, dataObj) {
-    // Simpan cepat ke perangkat lokal
     localStorage.setItem(key, JSON.stringify(dataObj));
-
-    // Kirim ke server Google Sheets dengan format text/plain agar tidak diblokir CORS
     if (API_URL && API_URL.trim() !== "") {
+        let cloudDataObj = JSON.parse(JSON.stringify(dataObj));
+
+        // FILTER ANTI-JEBOL: Cegah Base64 masuk ke Google Sheets!
+        if (key === KUNCI_SISWA && Array.isArray(cloudDataObj)) {
+            cloudDataObj = cloudDataObj.map(s => {
+                // Jika foto masih berupa teks "data:image" (Base64), tendang! Kosongkan!
+                if (s.foto && s.foto.startsWith("data:image")) {
+                    s.foto = ""; 
+                }
+                return s;
+            });
+        }
+
         fetch(API_URL, {
             method: 'POST',
-            redirect: 'follow',
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8',
-            },
-            body: JSON.stringify({ key: key, value: JSON.stringify(dataObj) })
+            redirect: 'follow', 
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ key: key, value: JSON.stringify(cloudDataObj) })
         }).catch(e => console.error("Cloud error", e));
     }
+}
+
+async function uploadFotoKeDrive(base64Data, namaSiswa) {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            redirect: 'follow',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+                action: "upload",
+                base64: base64Data,
+                fileName: "Foto_" + namaSiswa.replace(/\s+/g, '_') + "_" + Date.now() + ".jpg",
+                mimeType: "image/jpeg"
+            })
+        });
+        const result = await response.json();
+        if (result.status === "sukses") return result.url;
+        return "";
+    } catch (e) { console.error("Gagal upload foto:", e); return ""; }
 }
 
 function initData() {
@@ -107,7 +123,7 @@ function showToast(title, message, type = 'success') {
 }
 
 // ========================================
-// ROLE LOGIN
+// ROLE LOGIN & NAVIGASI
 // ========================================
 const ADMIN_PASS = "admin123";
 let isAdminMode = false;
@@ -132,14 +148,9 @@ function prosesLogin() {
         document.body.classList.remove('viewer-mode');
         document.getElementById('btnLoginLogout').innerText = "Logout Admin";
         tutupModal('modalLogin');
-    } else {
-        showToast("Akses Ditolak", "Kata sandi salah.", "error");
-    }
+    } else { showToast("Akses Ditolak", "Kata sandi salah.", "error"); }
 }
 
-// ========================================
-// NAVIGASI TOP BAR
-// ========================================
 const navLinks = document.querySelectorAll('.nav-link');
 const sections = document.querySelectorAll('.page-section');
 const mainNav = document.getElementById('mainNav');
@@ -219,7 +230,7 @@ function prosesFoto(event) {
         const img = new Image();
         img.onload = function() {
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 300; const scaleSize = MAX_WIDTH / img.width;
+            const MAX_WIDTH = 400; const scaleSize = MAX_WIDTH / img.width;
             canvas.width = MAX_WIDTH; canvas.height = img.height * scaleSize;
             const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             tempBase64Foto = canvas.toDataURL('image/jpeg', 0.6); 
@@ -264,7 +275,7 @@ function bukaModalSiswa() {
 
 function tutupModal(id) { document.getElementById(id).classList.remove('active'); }
 
-function simpanSiswa() {
+async function simpanSiswa() {
     const no = parseInt(document.getElementById('inputNoAbsen').value);
     const nis = document.getElementById('inputNIS').value.trim();
     const nama = document.getElementById('inputNamaLengkap').value.trim();
@@ -278,15 +289,31 @@ function simpanSiswa() {
     let siswa = getSiswa();
     if (siswa.find(s => s.no === no) && (!oldNo || parseInt(oldNo) !== no)) return showToast("Error", "No Absen duplikat!", "error");
     
+    const btnSimpan = document.querySelector('#modalSiswa .btn-primary');
+    btnSimpan.innerText = "Mengunggah..."; btnSimpan.disabled = true;
+
+    let finalLinkFoto = "";
+    if (tempBase64Foto !== "") {
+        showToast("Proses", "Mengunggah foto ke Google Drive...", "success");
+        finalLinkFoto = await uploadFotoKeDrive(tempBase64Foto, nama);
+        if(finalLinkFoto === "") showToast("Peringatan", "Upload foto gagal. Lanjut simpan teks.", "error");
+    } else if (oldNo) {
+        const sLama = siswa.find(s => s.no === parseInt(oldNo));
+        if (sLama && sLama.foto) finalLinkFoto = sLama.foto;
+    }
+
     if (oldNo) {
         const idx = siswa.findIndex(s => s.no === parseInt(oldNo));
-        if(idx !== -1) siswa[idx] = { no, nis, nama, jk, jabatan, tglLahir, foto: tempBase64Foto !== "" ? tempBase64Foto : siswa[idx].foto };
+        if(idx !== -1) siswa[idx] = { no, nis, nama, jk, jabatan, tglLahir, foto: finalLinkFoto };
     } else {
-        siswa.push({ no, nis, nama, jk, jabatan, tglLahir, foto: tempBase64Foto });
+        siswa.push({ no, nis, nama, jk, jabatan, tglLahir, foto: finalLinkFoto });
     }
     
     simpanKeCloud(KUNCI_SISWA, siswa);
+    
+    btnSimpan.innerText = "Simpan"; btnSimpan.disabled = false;
     tutupModal('modalSiswa'); renderDataSiswa();
+    showToast("Berhasil", "Data siswa disimpan.", "success");
 }
 
 function editSiswa(noLama) {
@@ -297,6 +324,7 @@ function editSiswa(noLama) {
     document.getElementById('inputJK').value = s.jk; document.getElementById('inputJabatan').value = s.jabatan || "Siswa";
     document.getElementById('inputTglLahir').value = s.tglLahir || "";
     document.getElementById('inputFoto').value = ""; tempBase64Foto = "";
+    
     const preview = document.getElementById('previewFoto');
     if(s.foto) { preview.src = s.foto; preview.classList.remove('hide'); } else { preview.classList.add('hide'); }
     document.getElementById('modalSiswa').classList.add('active');
@@ -323,7 +351,7 @@ function lihatDetailSiswa(no) {
     document.getElementById('detailNo').innerText = s.no; document.getElementById('detailTotalHadir').innerText = totalHadir + " Hari";
     const bg = document.getElementById('detailGenderBadge'); bg.innerText = s.jk === 'L' ? 'Laki-laki' : 'Perempuan'; bg.className = s.jk === 'L' ? 'badge badge-izin' : 'badge badge-sakit';
     document.getElementById('detailJabatanBadge').innerText = s.jabatan || "Siswa";
-    document.getElementById('detailFoto').src = s.foto ? s.foto : `https://ui-avatars.com/api/?name=${encodeURIComponent(s.nama)}&background=F4F4F2&color=375A4E&size=300`;
+    document.getElementById('detailFoto').src = s.foto && s.foto.startsWith("http") ? s.foto : `https://ui-avatars.com/api/?name=${encodeURIComponent(s.nama)}&background=F4F4F2&color=375A4E&size=300`;
     document.getElementById('modalDetailSiswa').classList.add('active');
 }
 function bukaZoomFoto() { document.getElementById('zoomImage').src = document.getElementById('detailFoto').src; document.getElementById('modalZoom').classList.add('active'); }
@@ -357,7 +385,7 @@ function renderFormAbsensi() {
 }
 
 function simpanAbsensi() {
-    const tgl = document.getElementById('tanggalAbsen').value; if (!tgl) return;
+    const tgl = document.getElementById('tanggalAbsen').value; if (!tgl) return showToast("Gagal", "Pilih tanggal absen", "error");
     let dataSimpan = [];
     document.querySelectorAll('#tabelAbsensiBody tr').forEach(r => {
         dataSimpan.push({ no: parseInt(r.dataset.no), nama: r.dataset.nama, status: r.querySelector('.status-select').value, ket: r.querySelector('.ket-input').value.trim() });
