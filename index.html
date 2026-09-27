@@ -3,131 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Piket & Absensi | Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Sistem Absensi & Piket</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="viewer-mode">
 
-    <!-- SIDEBAR -->
-    <button class="mobile-toggle" id="mobileToggle">
-        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-    </button>
-    
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-icon">
-                <svg width="24" height="24" fill="none" stroke="white" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    <!-- TOP NAVIGATION BAR -->
+    <header class="top-navbar">
+        <div class="nav-container">
+            <div class="brand-area">
+                <div class="brand-logo">A</div>
+                <div class="brand-text">
+                    <h2 class="serif-title">Absensi</h2>
+                    <p>Sistem Pengelolaan Kelas</p>
+                </div>
             </div>
-            <h2>Ruang<span class="text-primary">Kelas</span></h2>
+
+            <button class="mobile-menu-btn" id="mobileToggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+
+            <nav class="main-nav" id="mainNav">
+                <a href="#" class="nav-link active" data-target="dashboard">DASHBOARD</a>
+                <a href="#" class="nav-link" data-target="data-siswa">SISWA</a>
+                <a href="#" class="nav-link" data-target="absensi">ABSEN HARIAN</a>
+                <a href="#" class="nav-link" data-target="riwayat-absensi">RIWAYAT</a>
+                <a href="#" class="nav-link" data-target="rekap-absensi">REKAP</a>
+                <a href="#" class="nav-link" data-target="jadwal-piket">PIKET</a>
+                <a href="#" class="nav-link" data-target="kalender">KALENDER</a>
+                <a href="#" class="nav-link admin-only" data-target="pengaturan">PENGATURAN</a>
+                
+                <button class="btn-auth" id="btnLoginLogout" onclick="handleAuthClick()">Login Admin</button>
+            </nav>
         </div>
-        <nav class="sidebar-nav">
-            <p class="nav-label">MENU UTAMA</p>
-            <a href="#" class="nav-link active" data-target="dashboard">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg> Dashboard
-            </a>
-            <a href="#" class="nav-link" data-target="data-siswa">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> Data Siswa
-            </a>
-            <a href="#" class="nav-link" data-target="absensi">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Absensi Harian
-            </a>
-            
-            <p class="nav-label">LAPORAN</p>
-            <a href="#" class="nav-link" data-target="riwayat-absensi">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Riwayat Absensi
-            </a>
-            <a href="#" class="nav-link" data-target="rekap-absensi">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg> Rekapitulasi
-            </a>
-            
-            <p class="nav-label">MANAJEMEN</p>
-            <a href="#" class="nav-link" data-target="jadwal-piket">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg> Jadwal Piket
-            </a>
-            <a href="#" class="nav-link" data-target="kalender">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Kalender
-            </a>
-            <a href="#" class="nav-link" data-target="pengaturan">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg> Pengaturan
-            </a>
-        </nav>
-    </aside>
+    </header>
 
     <main class="main-content">
         <!-- DASHBOARD -->
         <section id="dashboard" class="page-section active">
-            <div class="header-area">
-                <div>
-                    <h1 class="page-title">Selamat Datang! 👋</h1>
-                    <p class="page-subtitle" id="dashTanggal">Tanggal Hari Ini</p>
-                </div>
+            <div class="section-header">
+                <h1 class="page-title">Dasbor Utama</h1>
+                <p class="page-subtitle" id="dashTanggal">Tanggal Hari Ini</p>
             </div>
             
-            <div class="hero-card">
-                <div class="hero-content">
-                    <h2 id="dashKelas">Nama Kelas</h2>
+            <div class="info-banner">
+                <div>
+                    <h2 id="dashKelas" class="serif-title">Nama Kelas</h2>
                     <p id="dashSekolah">Nama Sekolah</p>
-                    <div class="hero-badges">
-                        <span class="badge-hero">Wali: <span id="dashWali">Nama Wali</span></span>
-                        <span class="badge-hero">Siswa: <span id="dashTotalSiswa">0</span> Orang</span>
-                    </div>
                 </div>
-                <div class="hero-illustration">
-                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/><path d="M12 14v6.055"/></svg>
+                <div class="info-badges">
+                    <span class="badge-outline">Wali: <span id="dashWali">-</span></span>
+                    <span class="badge-outline">Siswa: <span id="dashTotalSiswa">0</span></span>
                 </div>
             </div>
 
             <div class="dashboard-grid">
                 <div class="panel">
                     <div class="panel-header">
-                        <h3>Statistik Kehadiran</h3>
+                        <h3>Kehadiran Hari Ini</h3>
                     </div>
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <div class="stat-icon bg-hadir-light text-hadir">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3"/></svg>
-                            </div>
-                            <div class="stat-info">
-                                <p>Hadir</p>
-                                <h3 id="dashHadir">0</h3>
-                            </div>
+                            <p>Hadir</p>
+                            <h3 id="dashHadir" class="text-hadir">0</h3>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon bg-izin-light text-izin">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9zM13 2v7h7"/></svg>
-                            </div>
-                            <div class="stat-info">
-                                <p>Izin</p>
-                                <h3 id="dashIzin">0</h3>
-                            </div>
+                            <p>Izin</p>
+                            <h3 id="dashIzin" class="text-izin">0</h3>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon bg-sakit-light text-sakit">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                            </div>
-                            <div class="stat-info">
-                                <p>Sakit</p>
-                                <h3 id="dashSakit">0</h3>
-                            </div>
+                            <p>Sakit</p>
+                            <h3 id="dashSakit" class="text-sakit">0</h3>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon bg-alpa-light text-alpa">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                            </div>
-                            <div class="stat-info">
-                                <p>Alpa</p>
-                                <h3 id="dashAlpa">0</h3>
-                            </div>
+                            <p>Alpa</p>
+                            <h3 id="dashAlpa" class="text-alpa">0</h3>
                         </div>
                     </div>
                 </div>
                 
                 <div class="panel">
                     <div class="panel-header">
-                        <h3>Piket Hari Ini</h3>
+                        <h3>Jadwal Piket</h3>
                     </div>
-                    <div id="dashPiketList" class="piket-list-modern">
+                    <div id="dashPiketList" class="piket-list">
                         <!-- List piket -->
                     </div>
                 </div>
@@ -136,30 +96,28 @@
 
         <!-- DATA SISWA -->
         <section id="data-siswa" class="page-section">
-            <div class="header-area flex-between">
+            <div class="section-header flex-between">
                 <div>
-                    <h1 class="page-title">Data Siswa</h1>
-                    <p class="page-subtitle">Kelola informasi siswa di kelas ini.</p>
+                    <h1 class="page-title">Katalog Siswa</h1>
+                    <p class="page-subtitle">Daftar anggota kelas.</p>
                 </div>
-                <button class="btn btn-primary" onclick="bukaModalSiswa()">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Tambah Siswa
-                </button>
+                <button class="btn btn-primary admin-only" onclick="bukaModalSiswa()">+ Tambah Data</button>
             </div>
             
             <div class="panel">
                 <div class="search-box">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" id="cariSiswa" class="input-search" placeholder="Cari berdasarkan nama atau no absen..." onkeyup="renderDataSiswa()">
+                    <input type="text" id="cariSiswa" class="input-control" placeholder="Cari nama, no absen, atau NIS..." onkeyup="renderDataSiswa()">
                 </div>
                 
                 <div class="table-container">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th width="10%">No</th>
+                                <th width="8%">No</th>
                                 <th>Nama Lengkap</th>
+                                <th>Status / Jabatan</th>
                                 <th>Gender</th>
-                                <th width="20%" class="text-right">Aksi</th>
+                                <th width="20%" class="text-right">Tindakan</th>
                             </tr>
                         </thead>
                         <tbody id="tabelSiswaBody"></tbody>
@@ -170,14 +128,14 @@
 
         <!-- ABSENSI -->
         <section id="absensi" class="page-section">
-            <div class="header-area">
-                <h1 class="page-title">Absensi Harian</h1>
-                <p class="page-subtitle">Catat kehadiran siswa setiap hari.</p>
+            <div class="section-header">
+                <h1 class="page-title">Input Kehadiran</h1>
+                <p class="page-subtitle">Pencatatan absensi harian.</p>
             </div>
             
             <div class="panel">
                 <div class="form-group row-group">
-                    <label>Pilih Tanggal</label>
+                    <label>Pilih Tanggal:</label>
                     <input type="date" id="tanggalAbsen" class="input-control w-auto" onchange="renderFormAbsensi()">
                 </div>
                 
@@ -185,27 +143,27 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th width="10%">No</th>
-                                <th>Siswa</th>
-                                <th width="25%">Status</th>
-                                <th>Keterangan (Opsional)</th>
+                                <th width="8%">No</th>
+                                <th>Nama Siswa</th>
+                                <th width="20%">Status</th>
+                                <th>Keterangan</th>
                             </tr>
                         </thead>
                         <tbody id="tabelAbsensiBody"></tbody>
                     </table>
                 </div>
                 
-                <div class="mt-4 flex-end">
-                    <button class="btn btn-primary btn-lg" onclick="simpanAbsensi()">Simpan Kehadiran</button>
+                <div class="mt-4 flex-end admin-only">
+                    <button class="btn btn-primary" onclick="simpanAbsensi()">Simpan Kehadiran</button>
                 </div>
             </div>
         </section>
 
         <!-- RIWAYAT ABSENSI -->
         <section id="riwayat-absensi" class="page-section">
-            <div class="header-area">
+            <div class="section-header">
                 <h1 class="page-title">Riwayat Absensi</h1>
-                <p class="page-subtitle">Lihat semua data absensi yang telah disimpan.</p>
+                <p class="page-subtitle">Arsip kehadiran kelas.</p>
             </div>
             
             <div class="panel">
@@ -226,7 +184,7 @@
                         <thead>
                             <tr>
                                 <th>Tanggal</th>
-                                <th>Siswa</th>
+                                <th>Nama Siswa</th>
                                 <th>Status</th>
                                 <th>Keterangan</th>
                             </tr>
@@ -239,14 +197,14 @@
 
         <!-- REKAP ABSENSI -->
         <section id="rekap-absensi" class="page-section">
-            <div class="header-area">
+            <div class="section-header">
                 <h1 class="page-title">Rekapitulasi</h1>
-                <p class="page-subtitle">Total kehadiran setiap siswa.</p>
+                <p class="page-subtitle">Total data kehadiran.</p>
             </div>
             
             <div class="panel">
                 <div class="form-group row-group">
-                    <label>Periode</label>
+                    <label>Periode:</label>
                     <select id="filterPeriodeRekap" class="input-control w-auto" onchange="renderRekap()">
                         <option value="semua">Semua Waktu</option>
                         <option value="mingguan">7 Hari Terakhir</option>
@@ -273,9 +231,9 @@
 
         <!-- JADWAL PIKET -->
         <section id="jadwal-piket" class="page-section">
-            <div class="header-area">
-                <h1 class="page-title">Jadwal Piket</h1>
-                <p class="page-subtitle">Atur petugas piket kebersihan harian.</p>
+            <div class="section-header">
+                <h1 class="page-title">Manajemen Piket</h1>
+                <p class="page-subtitle">Jadwal tugas kebersihan kelas.</p>
             </div>
             
             <div class="piket-grid" id="piketGridContainer">
@@ -285,20 +243,15 @@
 
         <!-- KALENDER -->
         <section id="kalender" class="page-section">
-            <div class="header-area">
-                <h1 class="page-title">Kalender Kelas</h1>
-                <p class="page-subtitle">Pantau aktivitas dalam tampilan bulanan.</p>
+            <div class="section-header">
+                <h1 class="page-title">Kalender Akademik</h1>
             </div>
             
             <div class="panel">
                 <div class="calendar-nav">
-                    <button class="btn btn-outline btn-icon" onclick="ubahBulan(-1)">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-                    </button>
-                    <h2 id="namaBulanTahun" class="calendar-title">Bulan Tahun</h2>
-                    <button class="btn btn-outline btn-icon" onclick="ubahBulan(1)">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-                    </button>
+                    <button class="btn btn-outline" onclick="ubahBulan(-1)">&#8592; Prev</button>
+                    <h2 id="namaBulanTahun" class="calendar-title serif-title">Bulan Tahun</h2>
+                    <button class="btn btn-outline" onclick="ubahBulan(1)">Next &#8594;</button>
                 </div>
                 
                 <div class="calendar-wrapper mt-4">
@@ -309,17 +262,16 @@
                 </div>
                 
                 <div class="legend-area mt-4">
-                    <div class="legend-item"><span class="dot dot-absen"></span> Data Absen Tersimpan</div>
-                    <div class="legend-item"><span class="dot dot-piket"></span> Jadwal Piket Aktif</div>
+                    <div class="legend-item"><span class="dot dot-absen"></span> Ada Absensi</div>
+                    <div class="legend-item"><span class="dot dot-piket"></span> Ada Piket</div>
                 </div>
             </div>
         </section>
 
         <!-- PENGATURAN -->
         <section id="pengaturan" class="page-section">
-            <div class="header-area">
+            <div class="section-header">
                 <h1 class="page-title">Pengaturan Sistem</h1>
-                <p class="page-subtitle">Konfigurasi identitas kelas.</p>
             </div>
             
             <div class="panel max-w-md">
@@ -335,62 +287,156 @@
                     <label>Nama Wali Kelas</label>
                     <input type="text" id="setWali" class="input-control">
                 </div>
-                <button class="btn btn-primary w-full" onclick="simpanPengaturan()">Simpan Perubahan</button>
+                <button class="btn btn-primary w-full admin-only" onclick="simpanPengaturan()">Simpan Konfigurasi</button>
+                
+                <div class="admin-only" style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
+                    <button class="btn btn-outline w-full" onclick="resetDatabase()" style="color: var(--c-alpa); border-color: var(--c-alpa);">Kosongkan Database</button>
+                </div>
             </div>
         </section>
 
     </main>
 
     <!-- MODALS -->
+
+    <!-- Modal Login -->
+    <div id="modalLogin" class="modal-overlay">
+        <div class="modal-card" style="max-width: 350px;">
+            <div class="modal-header">
+                <h2 class="serif-title">Otorisasi Admin</h2>
+                <button class="btn-close" onclick="tutupModal('modalLogin')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="text-sm mb-4">Silakan masukkan kata sandi.</p>
+                <div class="form-group">
+                    <input type="password" id="inputPassword" class="input-control" placeholder="Kata Sandi...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="tutupModal('modalLogin')">Batal</button>
+                <button class="btn btn-primary" onclick="prosesLogin()">Masuk</button>
+            </div>
+        </div>
+    </div>
     
     <!-- Modal Tambah/Edit Siswa -->
     <div id="modalSiswa" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
-                <h2 id="modalSiswaTitle">Tambah Siswa</h2>
+                <h2 id="modalSiswaTitle" class="serif-title">Data Siswa</h2>
                 <button class="btn-close" onclick="tutupModal('modalSiswa')">&times;</button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body modal-scroll">
                 <input type="hidden" id="editOldNoAbsen">
+                
                 <div class="form-group">
-                    <label>Nomor Absen</label>
-                    <input type="number" id="inputNoAbsen" class="input-control" placeholder="Contoh: 1">
+                    <label>Foto Siswa</label>
+                    <div class="upload-area flex-between" style="gap: 16px;">
+                        <img id="previewFoto" src="" alt="Preview" class="foto-preview hide">
+                        <input type="file" id="inputFoto" class="input-control w-full" accept="image/*" onchange="prosesFoto(event)">
+                    </div>
                 </div>
+                
+                <div class="grid-2-cols">
+                    <div class="form-group">
+                        <label>No. Absen</label>
+                        <input type="number" id="inputNoAbsen" class="input-control">
+                    </div>
+                    <div class="form-group">
+                        <label>NIS</label>
+                        <input type="text" id="inputNIS" class="input-control">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Nama Lengkap</label>
-                    <input type="text" id="inputNamaLengkap" class="input-control" placeholder="Masukkan nama siswa">
+                    <input type="text" id="inputNamaLengkap" class="input-control">
                 </div>
-                <div class="form-group">
-                    <label>Jenis Kelamin</label>
-                    <select id="inputJK" class="input-control">
-                        <option value="">-- Pilih Gender --</option>
-                        <option value="L">Laki-laki</option>
-                        <option value="P">Perempuan</option>
-                    </select>
+
+                <div class="grid-2-cols">
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="inputJK" class="input-control">
+                            <option value="L">Laki-laki</option>
+                            <option value="P">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Jabatan</label>
+                        <select id="inputJabatan" class="input-control">
+                            <option value="Siswa">Siswa</option>
+                            <option value="Ketua Kelas">Ketua Kelas</option>
+                            <option value="Wakil Ketua">Wakil Ketua</option>
+                            <option value="Sekretaris">Sekretaris</option>
+                            <option value="Wakil Sekretaris">Wakil Sekretaris</option>
+                            <option value="Bendahara">Bendahara</option>
+                            <option value="Wakil Bendahara">Wakil Bendahara</option>
+                        </select>
+                    </div>
                 </div>
+
+                <div class="form-group mb-0">
+                    <label>Tanggal Lahir</label>
+                    <input type="date" id="inputTglLahir" class="input-control">
+                </div>
+
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline" onclick="tutupModal('modalSiswa')">Batal</button>
-                <button class="btn btn-primary" onclick="simpanSiswa()">Simpan Data</button>
+                <button class="btn btn-outline" onclick="tutupModal('modalSiswa')">Tutup</button>
+                <button class="btn btn-primary" onclick="simpanSiswa()">Simpan</button>
             </div>
         </div>
+    </div>
+
+    <!-- Modal Detail Siswa -->
+    <div id="modalDetailSiswa" class="modal-overlay">
+        <div class="modal-card detail-card">
+            <div class="modal-header">
+                <h2 class="serif-title">Profil Siswa</h2>
+                <button class="btn-close" onclick="tutupModal('modalDetailSiswa')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-foto-wrapper" onclick="bukaZoomFoto()">
+                    <img id="detailFoto" src="" alt="Foto Siswa">
+                </div>
+                
+                <h3 id="detailNama" class="detail-name serif-title text-center">Nama</h3>
+                <div class="text-center mb-4">
+                    <span id="detailJabatanBadge" class="badge badge-neutral">Jabatan</span>
+                </div>
+                
+                <table class="table-info">
+                    <tr><td>No. Absen</td><td id="detailNo" class="text-right bold">0</td></tr>
+                    <tr><td>NIS</td><td id="detailNIS" class="text-right bold">-</td></tr>
+                    <!-- Penempatan Gender diubah menjadi rata kanan agar konsisten -->
+                    <tr><td>Gender</td><td class="text-right"><span id="detailGenderBadge" class="badge badge-izin">Laki-laki</span></td></tr>
+                    <tr><td>Tgl Lahir</td><td id="detailTglLahir" class="text-right bold">-</td></tr>
+                    <tr><td>Kehadiran</td><td id="detailTotalHadir" class="text-right bold text-hadir">0 Hari</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Zoom Foto -->
+    <div id="modalZoom" class="modal-overlay modal-zoom" onclick="tutupModal('modalZoom')">
+        <button class="btn-close zoom-close">&times;</button>
+        <img id="zoomImage" src="" alt="Zoom Foto">
     </div>
 
     <!-- Modal Edit Piket -->
     <div id="modalPiket" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
-                <h2 id="modalPiketTitle">Edit Piket</h2>
+                <h2 id="modalPiketTitle" class="serif-title">Edit Piket</h2>
                 <button class="btn-close" onclick="tutupModal('modalPiket')">&times;</button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="editHariPiket">
-                <label class="mb-2 block text-sm font-medium">Pilih Siswa (Bisa lebih dari satu):</label>
                 <div id="listCheckboxSiswa" class="custom-checkbox-list"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="tutupModal('modalPiket')">Batal</button>
-                <button class="btn btn-primary" onclick="simpanJadwalPiket()">Simpan Jadwal</button>
+                <button class="btn btn-primary" onclick="simpanJadwalPiket()">Simpan</button>
             </div>
         </div>
     </div>
