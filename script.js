@@ -8,7 +8,7 @@ const KUNCI_ABSENSI = "dataAbsensi";
 const KUNCI_PIKET = "dataPiket";
 const KUNCI_PENGATURAN = "dataPengaturan";
 
-const namaHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
+const namaHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
 // ========================================
@@ -40,13 +40,10 @@ function simpanKeCloud(key, dataObj) {
     if (API_URL && API_URL.trim() !== "") {
         let cloudDataObj = JSON.parse(JSON.stringify(dataObj));
 
-        // FILTER ANTI-JEBOL: Cegah Base64 masuk ke Google Sheets!
+        // FILTER ANTI-JEBOL: Cegah Base64 nyangkut
         if (key === KUNCI_SISWA && Array.isArray(cloudDataObj)) {
             cloudDataObj = cloudDataObj.map(s => {
-                // Jika foto masih berupa teks "data:image" (Base64), tendang! Kosongkan!
-                if (s.foto && s.foto.startsWith("data:image")) {
-                    s.foto = ""; 
-                }
+                if (s.foto && s.foto.startsWith("data:image")) { s.foto = ""; }
                 return s;
             });
         }
@@ -205,7 +202,8 @@ function renderDashboard() {
     const hariIniInt = tgl.getDay();
     const containerPiket = document.getElementById('dashPiketList'); containerPiket.innerHTML = "";
     
-    if (hariIniInt === 0) {
+    // Sesuaikan: Jika hari Minggu (0) atau Sabtu (6), libur.
+    if (hariIniInt === 0 || hariIniInt === 6) {
         containerPiket.innerHTML = "<p class='empty-state'>Libur.</p>";
     } else {
         const idSiswaPiket = piket[hariIniInt] || [];
@@ -220,7 +218,7 @@ function renderDashboard() {
 }
 
 // ========================================
-// DATA SISWA
+// DATA SISWA (SEARCH PINTAR & ANTI-ERROR)
 // ========================================
 let tempBase64Foto = "";
 function prosesFoto(event) {
@@ -243,12 +241,49 @@ function prosesFoto(event) {
 }
 
 function renderDataSiswa() {
-    const siswa = getSiswa(); const cari = document.getElementById('cariSiswa').value.toLowerCase();
-    const tbody = document.getElementById('tabelSiswaBody'); tbody.innerHTML = "";
-    let filtered = siswa.filter(s => s.nama.toLowerCase().includes(cari) || s.no.toString().includes(cari) || (s.nis && s.nis.toLowerCase().includes(cari))).sort((a,b) => a.no - b.no);
+    const siswa = getSiswa(); 
     
-    if (filtered.length === 0) return tbody.innerHTML = `<tr><td colspan="5" class="empty-state">Data kosong.</td></tr>`;
+    // Cegah error jika kotak pencarian belum dimuat oleh HTML
+    const kotakCari = document.getElementById('cariSiswa');
+    if (!kotakCari) return; 
+
+    const inputCari = kotakCari.value.toLowerCase().trim();
+    const tbody = document.getElementById('tabelSiswaBody'); 
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    let filtered = siswa;
+
+    // LOGIKA PENCARIAN PINTAR
+    if (inputCari !== "") {
+        // Cek apakah user HANYA mengetik angka
+        const isMurniAngka = /^\d+$/.test(inputCari);
+
+        filtered = siswa.filter(s => {
+            // Ubah semua data ke String agar tidak error saat dicari
+            const noAbsen = String(s.no || "");
+            const nisSiswa = String(s.nis || "").toLowerCase();
+            const namaSiswa = String(s.nama || "").toLowerCase();
+
+            if (isMurniAngka) {
+                // JIKA ANGKA: Harus sama PERSIS dengan No. Absen ATAU ada di dalam NIS
+                return noAbsen === inputCari || nisSiswa.includes(inputCari);
+            } else {
+                // JIKA HURUF: Cari kemiripan di Nama atau NIS
+                return namaSiswa.includes(inputCari) || nisSiswa.includes(inputCari);
+            }
+        });
+    }
+
+    // Urutkan selalu dari absen 1 ke bawah
+    filtered.sort((a, b) => (parseInt(a.no) || 0) - (parseInt(b.no) || 0));
     
+    // Jika tidak ada yang cocok
+    if (filtered.length === 0) {
+        return tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">Siswa tidak ditemukan.</div></td></tr>`;
+    }
+    
+    // Tampilkan hasil
     filtered.forEach(s => {
         tbody.innerHTML += `
             <tr>
@@ -264,6 +299,15 @@ function renderDataSiswa() {
             </tr>`;
     });
 }
+
+// PASTIKAN KOTAK PENCARIAN LANGSUNG BEREAKSI SAAT DIKETIK
+document.addEventListener("DOMContentLoaded", () => {
+    const kotakCari = document.getElementById('cariSiswa');
+    if (kotakCari) {
+        // Setiap kali ada huruf/angka yang diketik, langsung jalankan pencarian!
+        kotakCari.addEventListener('input', renderDataSiswa);
+    }
+});
 
 function bukaModalSiswa() {
     document.getElementById('modalSiswaTitle').innerText = "Data Siswa";
@@ -402,7 +446,7 @@ function renderRiwayat() {
     all.sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
     if (fTgl) all = all.filter(d => d.tanggal === fTgl); if (fNama) all = all.filter(d => d.nama.toLowerCase().includes(fNama)); if (fStatus !== "Semua") all = all.filter(d => d.status === fStatus);
     
-    if (all.length === 0) return tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Kosong.</td></tr>`;
+    if (all.length === 0) return tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state">Kosong.</div></td></tr>`;
     all.forEach(d => {
         let sv = siswa.find(x => x.no === d.no);
         tbody.innerHTML += `<tr><td>${d.tanggal}</td><td><div class="siswa-cell">${renderAvatar(d.nama, sv ? sv.foto : "")}${d.nama}</div></td><td><span class="badge badge-${d.status.toLowerCase()}">${d.status}</span></td><td>${d.ket || '-'}</td></tr>`;
@@ -427,10 +471,11 @@ function renderRekap() {
 }
 
 // ========================================
-// JADWAL PIKET & KALENDER & PENGATURAN
+// JADWAL PIKET (HANYA SENIN-JUMAT)
 // ========================================
 function renderJadwalPiket() {
     const piket = getPiket(); const siswa = getSiswa(); const container = document.getElementById('piketGridContainer'); container.innerHTML = "";
+    // Looping hanya 1 (Senin) sampai 5 (Jumat)
     for(let i = 1; i <= 5; i++) {
         const idTerpilih = piket[i] || [];
         let listSiswa = idTerpilih.length === 0 ? "<div class='empty-state'>Tidak ada piket</div>" : idTerpilih.map(no => { const s = siswa.find(x => x.no === no); return s ? `<div class="piket-item mb-2">${renderAvatar(s.nama, s.foto)}<span class="piket-name">${s.nama}</span></div>` : ''; }).join('');
@@ -463,7 +508,7 @@ function renderKalender() {
         let dayOfWeek = new Date(kalTahun, kalBulan, i).getDay();
         let indicators = "";
         if (absensiDb[dateStr]) indicators += `<span class="dot dot-absen"></span>`;
-        if (piketDb[dayOfWeek] && piketDb[dayOfWeek].length > 0 && dayOfWeek !== 0) indicators += `<span class="dot dot-piket"></span>`;
+        if (piketDb[dayOfWeek] && piketDb[dayOfWeek].length > 0 && dayOfWeek !== 0 && dayOfWeek !== 6) indicators += `<span class="dot dot-piket"></span>`;
         grid.innerHTML += `<div class="cal-day ${isToday}"><div class="cal-date">${i}</div><div class="indicator-area">${indicators}</div></div>`;
     }
 }
@@ -479,3 +524,4 @@ function simpanPengaturan() {
 }
 
 window.onload = () => { syncDataFromCloud(); };
+``
