@@ -4,75 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Absensi & Piket</title>
-    <!-- Pastikan cache browser terhapus dengan v=15000 -->
-    <link rel="stylesheet" href="style.css?v=15000">
-    
-    <!-- LIBRARY UNTUK DOWNLOAD EXCEL -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="viewer-mode">
 
-    <!-- TOP NAVBAR -->
+    <!-- TOP NAVIGATION BAR -->
     <header class="top-navbar">
         <div class="nav-container">
             <div class="brand-area">
+                <div class="brand-logo">A</div>
                 <div class="brand-text">
-                    <h2>Absensi</h2>
+                    <h2 class="serif-title">Absensi</h2>
+                    <p>Sistem Pengelolaan Kelas</p>
                 </div>
             </div>
-            
-            <button class="mobile-menu-btn" id="mobileToggle">☰</button>
-            
+
+            <button class="mobile-menu-btn" id="mobileToggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+
             <nav class="main-nav" id="mainNav">
                 <a href="#" class="nav-link active" data-target="dashboard">DASHBOARD</a>
                 <a href="#" class="nav-link" data-target="data-siswa">SISWA</a>
-                <a href="#" class="nav-link admin-only" data-target="absensi">ABSEN HARIAN</a>
+                <a href="#" class="nav-link" data-target="absensi">ABSEN HARIAN</a>
                 <a href="#" class="nav-link" data-target="riwayat-absensi">RIWAYAT</a>
                 <a href="#" class="nav-link" data-target="rekap-absensi">REKAP</a>
                 <a href="#" class="nav-link" data-target="jadwal-piket">PIKET</a>
                 <a href="#" class="nav-link" data-target="kalender">KALENDER</a>
                 <a href="#" class="nav-link admin-only" data-target="pengaturan">PENGATURAN</a>
+                
                 <button class="btn-auth" id="btnLoginLogout" onclick="handleAuthClick()">Login Admin</button>
             </nav>
         </div>
     </header>
 
     <main class="main-content">
-        <!-- 1. DASHBOARD -->
+        <!-- DASHBOARD -->
         <section id="dashboard" class="page-section active">
+            <div class="section-header">
+                <h1 class="page-title">Dasbor Utama</h1>
+                <p class="page-subtitle" id="dashTanggal">Tanggal Hari Ini</p>
+            </div>
             
-            <div class="school-banner">
-                <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1000&auto=format&fit=crop" id="bannerFotoSekolah" class="bg-banner" alt="Foto Sekolah">
-                <div class="banner-overlay">
-                    <h2 id="dashSekolah">Nama Sekolah</h2>
-                    <p id="dashKelas">Kelas Belum Diatur</p>
-                    
-                    <div class="wali-kelas-badge mt-4">
-                        <img id="dashFotoWali" src="https://ui-avatars.com/api/?name=Wali&background=0EA5E9&color=fff" alt="Wali Kelas">
-                        <div>
-                            <span class="label-wali">Wali Kelas</span>
-                            <strong id="dashWali">Nama Guru</strong>
-                        </div>
-                    </div>
-
-                    <div class="datetime-badge">
-                        <span id="dashTanggal"></span> 
-                        <span class="divider">•</span> 
-                        <span id="dashJam" class="jam-realtime">00:00:00</span>
-                    </div>
+            <div class="info-banner">
+                <div>
+                    <h2 id="dashKelas" class="serif-title">Nama Kelas</h2>
+                    <p id="dashSekolah">Nama Sekolah</p>
+                </div>
+                <div class="info-badges">
+                    <span class="badge-outline">Wali: <span id="dashWali">-</span></span>
+                    <span class="badge-outline">Siswa: <span id="dashTotalSiswa">0</span></span>
                 </div>
             </div>
 
             <div class="dashboard-grid">
-                <div class="main-stats">
-                    <h3 class="mb-4">Kehadiran Hari Ini</h3>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Kehadiran Hari Ini</h3>
+                    </div>
                     <div class="stats-grid">
                         <div class="stat-card">
                             <p>Hadir</p>
                             <h3 id="dashHadir" class="text-hadir">0</h3>
                         </div>
                         <div class="stat-card">
-                            <p>Izin / Dispen</p>
+                            <p>Izin</p>
                             <h3 id="dashIzin" class="text-izin">0</h3>
                         </div>
                         <div class="stat-card">
@@ -85,42 +82,42 @@
                         </div>
                     </div>
                 </div>
-                <div class="sidebar-info">
-                    <div class="piket-card">
-                        <div class="piket-card-header">
-                            <h3>Jadwal Piket</h3>
-                        </div>
-                        <div class="piket-card-body" id="dashPiketList" style="padding-bottom: 12px;"></div>
-                        <div id="dashBuktiPiketContainer" style="padding: 16px 24px; border-top: 2px dashed #E2E8F0; background: #F8FAFC; text-align:center;">
-                            <!-- Diisi oleh JS -->
-                        </div>
+                
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Jadwal Piket</h3>
+                    </div>
+                    <div id="dashPiketList" class="piket-list">
+                        <!-- List piket -->
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 2. DATA SISWA -->
+        <!-- DATA SISWA -->
         <section id="data-siswa" class="page-section">
-            <div class="section-header">
+            <div class="section-header flex-between">
                 <div>
                     <h1 class="page-title">Katalog Siswa</h1>
                     <p class="page-subtitle">Daftar anggota kelas.</p>
                 </div>
                 <button class="btn btn-primary admin-only" onclick="bukaModalSiswa()">+ Tambah Data</button>
             </div>
-
+            
             <div class="panel">
-                <input type="text" id="cariSiswa" class="input-control search-box" placeholder="Ketik nama atau No Absen..." oninput="renderDataSiswa()">
+                <div class="search-box">
+                    <input type="text" id="cariSiswa" class="input-control" placeholder="Cari nama, no absen, atau NIS..." onkeyup="renderDataSiswa()">
+                </div>
                 
-                <div class="table-container mt-4">
+                <div class="table-container">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>No</th>
+                                <th width="8%">No</th>
                                 <th>Nama Lengkap</th>
                                 <th>Jabatan</th>
-                                <th>L/P</th>
-                                <th class="text-right">Tindakan</th>
+                                <th>Gender</th>
+                                <th width="20%" class="text-right">Tindakan</th>
                             </tr>
                         </thead>
                         <tbody id="tabelSiswaBody"></tbody>
@@ -129,76 +126,67 @@
             </div>
         </section>
 
-        <!-- 3. ABSEN HARIAN (HANYA BISA DIAKSES ADMIN) -->
+        <!-- ABSENSI -->
         <section id="absensi" class="page-section">
             <div class="section-header">
-                <div>
-                    <h1 class="page-title">Absen Harian</h1>
-                    <p class="page-subtitle">Catat kehadiran dan unggah bukti surat (Sakit/Izin).</p>
-                </div>
-                <button class="btn btn-primary admin-only" onclick="simpanAbsensi()">Simpan Data</button>
+                <h1 class="page-title">Input Kehadiran</h1>
+                <p class="page-subtitle">Pencatatan absensi harian.</p>
             </div>
-
+            
             <div class="panel">
-                <div class="form-group" style="max-width: 250px;">
-                    <label>Pilih Tanggal</label>
-                    <input type="date" id="tanggalAbsen" class="input-control" onchange="renderFormAbsensi()">
+                <div class="form-group row-group">
+                    <label>Pilih Tanggal:</label>
+                    <input type="date" id="tanggalAbsen" class="input-control w-auto" onchange="renderFormAbsensi()">
                 </div>
                 
-                <div class="table-container">
+                <div class="table-container mt-4">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>No</th>
+                                <th width="8%">No</th>
                                 <th>Nama Siswa</th>
-                                <th>Status</th>
-                                <th>Keterangan & Bukti</th>
+                                <th width="20%">Status</th>
+                                <th>Keterangan</th>
                             </tr>
                         </thead>
                         <tbody id="tabelAbsensiBody"></tbody>
                     </table>
                 </div>
+                
+                <div class="mt-4 flex-end admin-only">
+                    <button class="btn btn-primary" onclick="simpanAbsensi()">Simpan Kehadiran</button>
+                </div>
             </div>
         </section>
 
-        <!-- 4. RIWAYAT ABSENSI -->
+        <!-- RIWAYAT ABSENSI -->
         <section id="riwayat-absensi" class="page-section">
             <div class="section-header">
-                <div>
-                    <h1 class="page-title">Riwayat Kehadiran</h1>
-                    <p class="page-subtitle">Log harian absen siswa beserta bukti.</p>
-                </div>
-                <button class="btn btn-primary" onclick="downloadExcel('tabelRiwayatDownload', 'Riwayat_Absensi', 'riwayat')">Download Excel</button>
+                <h1 class="page-title">Riwayat Absensi</h1>
+                <p class="page-subtitle">Arsip kehadiran kelas.</p>
             </div>
-
+            
             <div class="panel">
-                <div class="filter-grid mb-4">
-                    <div>
-                        <label>Filter Tanggal</label>
-                        <input type="date" id="filterTanggalRiwayat" class="input-control" onchange="renderRiwayat()">
-                    </div>
-                    <div>
-                        <label>Filter Status</label>
-                        <select id="filterStatusRiwayat" class="input-control" onchange="renderRiwayat()">
-                            <option value="Semua">Semua Status</option>
-                            <option value="Hadir">Hadir</option>
-                            <option value="Dispensasi">Dispensasi</option>
-                            <option value="Izin">Izin</option>
-                            <option value="Sakit">Sakit</option>
-                            <option value="Alpa">Alpa</option>
-                        </select>
-                    </div>
+                <div class="filter-grid">
+                    <input type="date" id="filterTanggalRiwayat" class="input-control" onchange="renderRiwayat()">
+                    <input type="text" id="filterNamaRiwayat" class="input-control" placeholder="Cari nama siswa..." onkeyup="renderRiwayat()">
+                    <select id="filterStatusRiwayat" class="input-control" onchange="renderRiwayat()">
+                        <option value="Semua">Semua Status</option>
+                        <option value="Hadir">Hadir</option>
+                        <option value="Izin">Izin</option>
+                        <option value="Sakit">Sakit</option>
+                        <option value="Alpa">Alpa</option>
+                    </select>
                 </div>
-
-                <div class="table-container">
-                    <table class="table" id="tabelRiwayatDownload">
+                
+                <div class="table-container mt-4">
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th>Tanggal</th>
-                                <th>Jam</th>
                                 <th>Nama Siswa</th>
                                 <th>Status</th>
-                                <th>Keterangan & Bukti</th>
+                                <th>Keterangan</th>
                             </tr>
                         </thead>
                         <tbody id="tabelRiwayatBody"></tbody>
@@ -207,35 +195,32 @@
             </div>
         </section>
 
-        <!-- 5. REKAP ABSENSI (KOLOM DISPEN DIHAPUS) -->
+        <!-- REKAP ABSENSI -->
         <section id="rekap-absensi" class="page-section">
             <div class="section-header">
-                <div>
-                    <h1 class="page-title">Rekapitulasi</h1>
-                    <p class="page-subtitle">Total kehadiran siswa.</p>
-                </div>
-                <button class="btn btn-primary" onclick="downloadExcel('tabelRekapDownload', 'Rekap_Absensi', 'rekap')">Download Excel</button>
+                <h1 class="page-title">Rekapitulasi</h1>
+                <p class="page-subtitle">Total data kehadiran.</p>
             </div>
-
+            
             <div class="panel">
-                <div class="form-group" style="max-width: 250px;">
-                    <label>Periode</label>
-                    <select id="filterPeriodeRekap" class="input-control" onchange="renderRekap()">
+                <div class="form-group row-group">
+                    <label>Periode:</label>
+                    <select id="filterPeriodeRekap" class="input-control w-auto" onchange="renderRekap()">
                         <option value="semua">Semua Waktu</option>
-                        <option value="bulanan">Bulan Ini</option>
                         <option value="mingguan">7 Hari Terakhir</option>
+                        <option value="bulanan">Bulan Ini</option>
                     </select>
                 </div>
-
-                <div class="table-container">
-                    <table class="table" id="tabelRekapDownload">
+                
+                <div class="table-container mt-4">
+                    <table class="table text-center-cols">
                         <thead>
                             <tr>
-                                <th>Nama Siswa</th>
-                                <th>Hadir</th>
-                                <th>Izin</th>
-                                <th>Sakit</th>
-                                <th>Alpa</th>
+                                <th class="text-left">Siswa</th>
+                                <th class="text-hadir">Hadir</th>
+                                <th class="text-izin">Izin</th>
+                                <th class="text-sakit">Sakit</th>
+                                <th class="text-alpa">Alpa</th>
                             </tr>
                         </thead>
                         <tbody id="tabelRekapBody"></tbody>
@@ -244,163 +229,210 @@
             </div>
         </section>
 
-        <!-- 6. PIKET -->
+        <!-- JADWAL PIKET -->
         <section id="jadwal-piket" class="page-section">
             <div class="section-header">
-                <h1 class="page-title">Jadwal Piket</h1>
+                <h1 class="page-title">Manajemen Piket</h1>
+                <p class="page-subtitle">Jadwal tugas kebersihan kelas.</p>
             </div>
-            <div class="piket-grid" id="piketGridContainer"></div>
+            
+            <div class="piket-grid" id="piketGridContainer">
+                <!-- Card piket di-render oleh JS -->
+            </div>
         </section>
 
-        <!-- 7. KALENDER -->
+        <!-- KALENDER -->
         <section id="kalender" class="page-section">
+            <div class="section-header">
+                <h1 class="page-title">Kalender Akademik</h1>
+            </div>
+            
             <div class="panel">
                 <div class="calendar-nav">
-                    <button class="btn btn-outline" onclick="ubahBulan(-1)">❮</button>
-                    <div class="calendar-title" id="namaBulanTahun">Bulan Tahun</div>
-                    <button class="btn btn-outline" onclick="ubahBulan(1)">❯</button>
+                    <button class="btn btn-outline" onclick="ubahBulan(-1)">&#8592; Prev</button>
+                    <h2 id="namaBulanTahun" class="calendar-title serif-title">Bulan Tahun</h2>
+                    <button class="btn btn-outline" onclick="ubahBulan(1)">Next &#8594;</button>
                 </div>
-                <div class="calendar-wrapper">
+                
+                <div class="calendar-wrapper mt-4">
                     <div class="calendar-header-row">
                         <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
                     </div>
                     <div class="calendar-grid" id="kalenderGrid"></div>
                 </div>
+                
+                <div class="legend-area mt-4">
+                    <div class="legend-item"><span class="dot dot-absen"></span> Ada Absensi</div>
+                    <div class="legend-item"><span class="dot dot-piket"></span> Ada Piket</div>
+                </div>
             </div>
         </section>
 
-        <!-- 8. PENGATURAN -->
-        <section id="pengaturan" class="page-section admin-only">
-            <div class="panel" style="max-width: 600px; margin: 0 auto;">
-                <h2 class="mb-4">Pengaturan Kelas</h2>
+        <!-- PENGATURAN -->
+        <section id="pengaturan" class="page-section">
+            <div class="section-header">
+                <h1 class="page-title">Pengaturan Sistem</h1>
+            </div>
+            
+            <div class="panel max-w-md">
                 <div class="form-group">
                     <label>Nama Sekolah</label>
-                    <input type="text" id="setSekolah" class="input-control" placeholder="Contoh: SMA Negeri 1...">
+                    <input type="text" id="setSekolah" class="input-control">
                 </div>
                 <div class="form-group">
                     <label>Nama Kelas</label>
-                    <input type="text" id="setKelas" class="input-control" placeholder="Contoh: XI IPA 1">
+                    <input type="text" id="setKelas" class="input-control">
                 </div>
-                <div class="form-group">
-                    <label>Link Foto Sekolah (Background Dashboard)</label>
-                    <input type="text" id="setFotoSekolah" class="input-control" placeholder="Paste link URL gambar">
-                </div>
-                
-                <h3 class="mt-4 mb-4">Profil Wali Kelas</h3>
-                <div class="form-group">
+                <div class="form-group mb-4">
                     <label>Nama Wali Kelas</label>
-                    <input type="text" id="setWali" class="input-control" placeholder="Contoh: Bpk. Budi Santoso">
+                    <input type="text" id="setWali" class="input-control">
                 </div>
-                <div class="form-group">
-                    <label>Link Foto Wali Kelas</label>
-                    <input type="text" id="setFotoWali" class="input-control" placeholder="Paste link URL gambar (Opsional)">
-                </div>
+                <button class="btn btn-primary w-full admin-only" onclick="simpanPengaturan()">Simpan Konfigurasi</button>
                 
-                <div class="mt-4 flex-between">
-                    <button class="btn btn-danger-outline" onclick="resetDatabase()">Kosongkan Database</button>
-                    <button class="btn btn-primary" onclick="simpanPengaturan()">Simpan Pengaturan</button>
+                <div class="admin-only" style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
+                    <button class="btn btn-outline w-full" onclick="resetDatabase()" style="color: var(--c-alpa); border-color: var(--c-alpa);">Kosongkan Database</button>
                 </div>
             </div>
         </section>
+
     </main>
 
-    <!-- MODAL TAMBAH SISWA -->
-    <div class="modal-overlay" id="modalSiswa">
+    <!-- MODALS -->
+
+    <!-- Modal Login -->
+    <div id="modalLogin" class="modal-overlay">
+        <div class="modal-card" style="max-width: 350px;">
+            <div class="modal-header">
+                <h2 class="serif-title">Otorisasi Admin</h2>
+                <button class="btn-close" onclick="tutupModal('modalLogin')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="text-sm mb-4">Silakan masukkan kata sandi.</p>
+                <div class="form-group">
+                    <input type="password" id="inputPassword" class="input-control" placeholder="Kata Sandi...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="tutupModal('modalLogin')">Batal</button>
+                <button class="btn btn-primary" onclick="prosesLogin()">Masuk</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Tambah/Edit Siswa -->
+    <div id="modalSiswa" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
-                <h2 id="modalSiswaTitle">Data Siswa</h2>
-                <button class="btn-close" onclick="tutupModal('modalSiswa')">×</button>
+                <h2 id="modalSiswaTitle" class="serif-title">Data Siswa</h2>
+                <button class="btn-close" onclick="tutupModal('modalSiswa')">&times;</button>
             </div>
-            <div class="modal-scroll">
+            <div class="modal-body modal-scroll">
                 <input type="hidden" id="editOldNoAbsen">
-                <div class="grid-2-cols mb-4">
-                    <div class="form-group mb-0">
-                        <label>No Absen</label>
+                
+                <div class="form-group">
+                    <label>Foto Siswa</label>
+                    <div class="upload-area flex-between" style="gap: 16px;">
+                        <img id="previewFoto" src="" alt="Preview" class="foto-preview hide">
+                        <input type="file" id="inputFoto" class="input-control w-full" accept="image/*" onchange="prosesFoto(event)">
+                    </div>
+                </div>
+                
+                <div class="grid-2-cols">
+                    <div class="form-group">
+                        <label>No. Absen</label>
                         <input type="number" id="inputNoAbsen" class="input-control">
                     </div>
-                    <div class="form-group mb-0">
+                    <div class="form-group">
                         <label>NIS</label>
                         <input type="text" id="inputNIS" class="input-control">
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label>Nama Lengkap</label>
                     <input type="text" id="inputNamaLengkap" class="input-control">
                 </div>
-                <div class="grid-2-cols mb-4">
-                    <div class="form-group mb-0">
+
+                <div class="grid-2-cols">
+                    <div class="form-group">
                         <label>Gender</label>
                         <select id="inputJK" class="input-control">
-                            <option value="L">Laki-Laki</option>
+                            <option value="L">Laki-laki</option>
                             <option value="P">Perempuan</option>
                         </select>
                     </div>
-                    <div class="form-group mb-0">
+                    <div class="form-group">
                         <label>Jabatan</label>
                         <select id="inputJabatan" class="input-control">
                             <option value="Siswa">Siswa</option>
                             <option value="Ketua Kelas">Ketua Kelas</option>
                             <option value="Wakil Ketua">Wakil Ketua</option>
                             <option value="Sekretaris">Sekretaris</option>
+                            <option value="Wakil Sekretaris">Wakil Sekretaris</option>
                             <option value="Bendahara">Bendahara</option>
+                            <option value="Wakil Bendahara">Wakil Bendahara</option>
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
+
+                <div class="form-group mb-0">
                     <label>Tanggal Lahir</label>
                     <input type="date" id="inputTglLahir" class="input-control">
                 </div>
-                <div class="form-group">
-                    <label>Foto Siswa</label>
-                    <input type="file" id="inputFoto" class="input-control" accept="image/*" onchange="prosesFoto(event)">
-                    <div class="mt-4 text-center">
-                        <img id="previewFoto" class="foto-preview hide">
-                    </div>
-                </div>
+
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline" onclick="tutupModal('modalSiswa')">Batal</button>
+                <button class="btn btn-outline" onclick="tutupModal('modalSiswa')">Tutup</button>
                 <button class="btn btn-primary" onclick="simpanSiswa()">Simpan</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DETAIL SISWA -->
-    <div class="modal-overlay" id="modalDetailSiswa">
+    <!-- Modal Detail Siswa -->
+    <div id="modalDetailSiswa" class="modal-overlay">
         <div class="modal-card detail-card">
             <div class="modal-header">
-                <h2>Profil Siswa</h2>
-                <button class="btn-close" onclick="tutupModal('modalDetailSiswa')">×</button>
+                <h2 class="serif-title">Profil Siswa</h2>
+                <button class="btn-close" onclick="tutupModal('modalDetailSiswa')">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="detail-foto-wrapper" onclick="bukaZoomFoto()">
                     <img id="detailFoto" src="" alt="Foto Siswa">
                 </div>
-                <h3 id="detailNama">Nama Lengkap</h3>
-                <span id="detailJabatanBadge" class="badge badge-neutral">Siswa</span>
+                
+                <h3 id="detailNama" class="detail-name serif-title text-center">Nama</h3>
+                <div class="text-center mb-4">
+                    <span id="detailJabatanBadge" class="badge badge-neutral">Jabatan</span>
+                </div>
                 
                 <table class="table-info">
-                    <tr><td>No. Absen</td><td id="detailNo">0</td></tr>
-                    <tr><td>NIS</td><td id="detailNIS">-</td></tr>
-                    <tr><td>Gender</td><td><span id="detailGenderBadge" class="badge">L</span></td></tr>
-                    <tr><td>Tgl Lahir</td><td id="detailTglLahir">-</td></tr>
-                    <tr><td>Kehadiran</td><td id="detailTotalHadir" class="text-hadir">0 Hari</td></tr>
+                    <tr><td>No. Absen</td><td id="detailNo" class="text-right bold">0</td></tr>
+                    <tr><td>NIS</td><td id="detailNIS" class="text-right bold">-</td></tr>
+                    <!-- Penempatan Gender diubah menjadi rata kanan agar konsisten -->
+                    <tr><td>Gender</td><td class="text-right"><span id="detailGenderBadge" class="badge badge-izin">Laki-laki</span></td></tr>
+                    <tr><td>Tgl Lahir</td><td id="detailTglLahir" class="text-right bold">-</td></tr>
+                    <tr><td>Kehadiran</td><td id="detailTotalHadir" class="text-right bold text-hadir">0 Hari</td></tr>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- MODAL ATUR PIKET -->
-    <div class="modal-overlay" id="modalPiket">
+    <!-- Modal Zoom Foto -->
+    <div id="modalZoom" class="modal-overlay modal-zoom" onclick="tutupModal('modalZoom')">
+        <button class="btn-close zoom-close">&times;</button>
+        <img id="zoomImage" src="" alt="Zoom Foto">
+    </div>
+
+    <!-- Modal Edit Piket -->
+    <div id="modalPiket" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
-                <h2 id="modalPiketTitle">Piket</h2>
-                <button class="btn-close" onclick="tutupModal('modalPiket')">×</button>
+                <h2 id="modalPiketTitle" class="serif-title">Edit Piket</h2>
+                <button class="btn-close" onclick="tutupModal('modalPiket')">&times;</button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="editHariPiket">
-                <p class="text-muted mb-4">Pilih siswa yang bertugas pada hari ini.</p>
-                <div class="custom-checkbox-list" id="listCheckboxSiswa"></div>
+                <div id="listCheckboxSiswa" class="custom-checkbox-list"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="tutupModal('modalPiket')">Batal</button>
@@ -409,30 +441,9 @@
         </div>
     </div>
 
-    <!-- MODAL LOGIN -->
-    <div class="modal-overlay" id="modalLogin">
-        <div class="modal-card" style="max-width: 320px;">
-            <div class="modal-header">
-                <h2>Login Admin</h2>
-                <button class="btn-close" onclick="tutupModal('modalLogin')">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Kata Sandi</label>
-                    <input type="password" id="inputPassword" class="input-control">
-                </div>
-                <button class="btn btn-primary w-full mt-4" onclick="prosesLogin()">Masuk</button>
-            </div>
-        </div>
-    </div>
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
 
-    <!-- MODAL ZOOM FOTO -->
-    <div class="modal-overlay modal-zoom" id="modalZoom" onclick="tutupModal('modalZoom')">
-        <img id="zoomImage" src="">
-    </div>
-
-    <div class="toast-container" id="toastContainer"></div>
-
-    <script src="script.js?v=15000"></script>
+    <script src="script.js?v=9999"></script>
 </body>
 </html>
