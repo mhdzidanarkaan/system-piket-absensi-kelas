@@ -11,12 +11,12 @@
     --primary-light: #E0F2FE;
     
     /* Layout & Background (Terang & Bernapas) */
-    --bg-body: #F4F7FB;       /* Abu-abu kebiruan sangat muda (Bikin mata rileks) */
-    --bg-panel: #FFFFFF;      /* Putih bersih untuk kartu */
+    --bg-body: #F4F7FB;       
+    --bg-panel: #FFFFFF;      
     
     /* Teks & Elemen Halus */
     --border: rgba(0, 0, 0, 0.05);        
-    --text-main: #1E293B;     /* Slate pekat (Hitam yang nggak bikin sakit mata) */
+    --text-main: #1E293B;     
     --text-muted: #64748B;    
     
     /* Warna Status (Soft Pastel tapi Jelas) */
@@ -28,8 +28,8 @@
     /* Efek Melayang & Luwes */
     --shadow-float: 0 12px 36px -12px rgba(0,0,0,0.1);
     --shadow-card: 0 4px 20px -4px rgba(0,0,0,0.04);
-    --radius-card: 24px;   /* Melengkung estetik */
-    --radius-btn: 999px;   /* Bentuk kapsul penuh */
+    --radius-card: 24px;   
+    --radius-btn: 999px;   
     --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
@@ -57,9 +57,14 @@ h1, h2, h3, h4 { color: var(--text-main); font-weight: 800; letter-spacing: -0.5
 .text-sakit { color: var(--c-sakit); font-weight: 700;} 
 .text-alpa { color: var(--c-alpa); font-weight: 700;}
 
-/* Mode Penonton */
+/* ========================================
+   SISTEM KEAMANAN UI (VIEWER MODE)
+======================================== */
 body.viewer-mode .admin-only { display: none !important; }
-body.viewer-mode #tabelAbsensiBody .input-control { pointer-events: none; background: transparent; font-weight: 700; color: var(--text-main); text-align: center;}
+body.viewer-mode #tabelAbsensiBody .input-control { 
+    pointer-events: none; background: transparent; 
+    font-weight: 700; color: var(--text-main); text-align: center;
+}
 
 /* ========================================
    HEADER (FLOATING PILL NAVBAR)
@@ -76,18 +81,15 @@ body.viewer-mode #tabelAbsensiBody .input-control { pointer-events: none; backgr
     backdrop-filter: blur(12px);
     display: flex; justify-content: space-between; align-items: center;
     height: 70px;
-    border-radius: 100px; /* Bikin navbar jadi kapsul melayang */
+    border-radius: 100px; 
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
     border: 1px solid rgba(255, 255, 255, 1);
 }
 
 .brand-area { display: flex; align-items: center; gap: 10px; }
-
-/* CSS MAGIC: MENYEMBUNYIKAN LOGO 'A' DAN SUBTITLE JELEK! */
 .brand-logo { display: none !important; }
 .brand-text p { display: none !important; }
 
-/* Membuat judul jadi clean dan estetik */
 .brand-text h2 { 
     font-size: 1.4rem; font-weight: 900; margin: 0; 
     color: #0F172A; letter-spacing: -0.5px;
@@ -130,7 +132,6 @@ body.viewer-mode #tabelAbsensiBody .input-control { pointer-events: none; backgr
 .page-title { font-size: 2.2rem; margin-bottom: 0; letter-spacing: -1px; }
 .page-subtitle { color: var(--text-muted); font-size: 1rem; font-weight: 500; }
 
-/* Kartu Super Bersih */
 .panel {
     background: var(--bg-panel);
     border: none;
@@ -140,23 +141,62 @@ body.viewer-mode #tabelAbsensiBody .input-control { pointer-events: none; backgr
 }
 
 /* ========================================
-   DASHBOARD
+   BANNER SEKOLAH (DIPERBAIKI)
 ======================================== */
-.info-banner {
-    background: #0F172A; /* Slate gelap yang sangat kekinian */
-    border-radius: var(--radius-card); padding: 32px;
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 32px; color: white; box-shadow: var(--shadow-float);
-    position: relative; overflow: hidden;
+.school-banner {
+    position: relative;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    margin-bottom: 24px;
+    height: 200px; /* Dipertinggi sedikit agar muat profil wali */
+    box-shadow: var(--shadow-float);
+    background-color: var(--primary); /* Warna cadangan */
 }
-.info-banner h2 { font-size: 1.8rem; margin-bottom: 6px; color: white; }
-.info-banner p { color: #94A3B8; font-size: 1rem; font-weight: 500;}
-.badge-outline { 
-    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); 
-    padding: 8px 16px; font-size: 0.85rem; font-weight: 700; color: white; 
-    border-radius: var(--radius-btn); backdrop-filter: blur(4px);
+.school-banner img.bg-banner {
+    width: 100%; height: 100%; object-fit: cover;
+    position: absolute; top: 0; left: 0; z-index: 1;
 }
+.banner-overlay {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to right, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.4) 100%);
+    z-index: 2; padding: 32px; display: flex; flex-direction: column; justify-content: flex-end;
+}
+.banner-overlay h2 { color: white; font-size: 2rem; margin-bottom: 4px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+.banner-overlay p { color: #E2E8F0; font-size: 1.1rem; font-weight: 500;}
 
+/* WALI KELAS BADGE (PROFIL) */
+.wali-kelas-badge {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 6px 16px 6px 6px;
+    border-radius: 999px;
+    margin-top: 16px;
+    width: max-content; /* Mencegah badge memanjang */
+}
+.wali-kelas-badge img {
+    width: 36px; height: 36px; 
+    border-radius: 50%; object-fit: cover;
+    border: 2px solid white;
+}
+.wali-kelas-badge div { display: flex; flex-direction: column; justify-content: center; }
+.label-wali { font-size: 0.7rem; color: #cbd5e1; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;}
+.wali-kelas-badge strong { color: white; font-size: 0.95rem; font-weight: 700; line-height: 1.2; margin-top: 2px;}
+
+.datetime-badge {
+    position: absolute; top: 20px; right: 20px;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    padding: 8px 16px; border-radius: var(--radius-btn);
+    color: white; font-weight: 700; font-size: 0.9rem;
+    display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.2);
+}
+.jam-realtime { color: #38BDF8; font-family: monospace; font-size: 1.1rem;}
+.divider { color: rgba(255,255,255,0.5); }
+
+/* ========================================
+   DASHBOARD STATS
+======================================== */
 .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 28px; }
 .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 .stat-card {
@@ -187,7 +227,7 @@ body.viewer-mode #tabelAbsensiBody .input-control { pointer-events: none; backgr
 .foto-preview { width: 100px; height: 100px; border-radius: 24px; object-fit: cover; box-shadow: var(--shadow-card); }
 
 /* ========================================
-   FORM & INPUT (GAYA APLIKASI)
+   FORM & INPUT
 ======================================== */
 .input-control, select, input[type="text"], input[type="date"], input[type="number"], input[type="password"] {
     width: 100%; padding: 14px 20px; border: 2px solid transparent;
@@ -196,13 +236,13 @@ body.viewer-mode #tabelAbsensiBody .input-control { pointer-events: none; backgr
     font-family: inherit; font-weight: 600;
 }
 .input-control:focus { background: white; border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px var(--primary-light); }
-.search-box { max-width: 100%; } /* Biar kotak pencarian lebih panjang & modern */
+.search-box { max-width: 100%; } 
 .form-group { margin-bottom: 20px; }
 .form-group label { display: block; margin-bottom: 10px; font-weight: 700; font-size: 0.95rem; color: var(--text-main); padding-left: 4px;}
 .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
 
 /* ========================================
-   BUTTONS (KAPSUL MODERN)
+   BUTTONS
 ======================================== */
 .btn {
     display: inline-flex; align-items: center; justify-content: center;
@@ -221,7 +261,7 @@ body.viewer-mode #tabelAbsensiBody .input-control { pointer-events: none; backgr
 .btn-sm { padding: 8px 18px; font-size: 0.85rem; }
 
 /* ========================================
-   TABEL ANTI-KAKU (BARIS TERPISAH)
+   TABEL
 ======================================== */
 .table-container { overflow-x: auto; padding: 4px; border: none; background: transparent; }
 .table { width: 100%; border-collapse: separate; border-spacing: 0 12px; text-align: left; }
@@ -229,9 +269,7 @@ body.viewer-mode #tabelAbsensiBody .input-control { pointer-events: none; backgr
     padding: 0 20px 10px 20px; font-size: 0.85rem; 
     color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
 }
-.table td { 
-    padding: 18px 20px; background: white; vertical-align: middle; 
-}
+.table td { padding: 18px 20px; background: white; vertical-align: middle; }
 .table tr td:first-child { border-radius: 20px 0 0 20px; }
 .table tr td:last-child { border-radius: 0 20px 20px 0; }
 .table tbody tr { box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); }
@@ -247,7 +285,7 @@ body.viewer-mode #tabelAbsensiBody .input-control { pointer-events: none; backgr
 .badge-neutral { background: var(--bg-body); color: var(--text-muted); }
 
 /* ========================================
-   JADWAL PIKET (KARTU CERIA)
+   JADWAL PIKET (KARTU)
 ======================================== */
 .piket-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
 .piket-card { background: white; border-radius: var(--radius-card); box-shadow: var(--shadow-card); transition: var(--transition); overflow: hidden;}
@@ -263,7 +301,7 @@ body.viewer-mode #tabelAbsensiBody .input-control { pointer-events: none; backgr
 .checkbox-item input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary); cursor: pointer;}
 
 /* ========================================
-   KALENDER (SOFT GRID)
+   KALENDER
 ======================================== */
 .calendar-nav { display: flex; justify-content: space-between; align-items: center; padding-bottom: 24px; margin-bottom: 24px; border-bottom: 2px dashed #E2E8F0; }
 .calendar-title { font-size: 1.6rem; font-weight: 800; color: #0F172A;}
@@ -286,74 +324,74 @@ body.viewer-mode #tabelAbsensiBody .input-control { pointer-events: none; backgr
 ======================================== */
 .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); display: none; place-items: center; z-index: 2000; padding: 20px; backdrop-filter: blur(8px); }
 .modal-overlay.active { display: grid; }
+
+/* Tambahkan overflow hidden di card luar, biar isinya yang scroll */
 .modal-card { background: white; width: 100%; max-width: 520px; display: flex; flex-direction: column; max-height: 90vh; border-radius: 32px; box-shadow: 0 30px 60px rgba(0,0,0,0.15); overflow: hidden; }
-.modal-header { padding: 28px 32px 20px; display: flex; justify-content: space-between; align-items: center; }
-.modal-header h2 { font-size: 1.6rem; margin: 0; }
+
+.modal-header { padding: 24px 32px 16px; display: flex; justify-content: space-between; align-items: center; }
+.modal-header h2 { font-size: 1.5rem; margin: 0; line-height: 1;}
 .btn-close { background: var(--bg-body); border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; transition: var(--transition); display: flex; justify-content: center; align-items: center;}
 .btn-close:hover { color: white; background: var(--c-alpa); transform: rotate(90deg); }
 
 .modal-scroll { padding: 0 32px 32px; overflow-y: auto; flex-grow: 1; }
-.modal-body { padding: 0 32px 32px; }
-.modal-footer { padding: 24px 32px; display: flex; justify-content: flex-end; gap: 14px; background: #F8FAFC; border-top: 1px solid #F1F5F9;}
 
-/* Profil Siswa (Kartu ID Estetik) */
-.detail-card { max-width: 380px; margin: 0 auto; text-align: center; }
+/* KUNCI PERBAIKAN: Tambahkan overflow-y auto agar bisa di-scroll kalau mendelep */
+.modal-body { padding: 0 32px 32px; overflow-y: auto; flex-grow: 1; }
+
+.modal-footer { padding: 20px 32px; display: flex; justify-content: flex-end; gap: 14px; background: #F8FAFC; border-top: 1px solid #F1F5F9;}
+
+/* === KARTU PROFIL ESTETIK (LEBIH MUNGIL) === */
+.detail-card { 
+    max-width: 340px; /* Makin ramping */
+    margin: 0 auto; 
+    text-align: center; 
+}
+.detail-card .modal-body {
+    padding: 0 24px 24px; 
+    overflow-y: auto; /* Mencegah data mendelep / hilang */
+}
 .detail-foto-wrapper { 
-    width: 130px; height: 173px; /* Standar 3:4 */
-    margin: 0 auto 28px auto; 
-    border: 8px solid white; 
-    background: var(--bg-body); cursor: pointer; border-radius: 28px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: 100px; height: 130px; /* Foto dikecilkan lagi biar pas di layar */
+    margin: 0 auto 16px auto; /* Jarak bawah dipangkas agar tabel naik */
+    border: 5px solid white; 
+    background: var(--bg-body); cursor: pointer; border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .detail-foto-wrapper:hover { transform: scale(1.08) rotate(3deg); }
-.detail-foto-wrapper img { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 20px; }
+.detail-foto-wrapper img { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 14px; }
 
-.table-info { width: 100%; font-size: 1.05rem; margin-top: 28px; text-align: left; border-collapse: separate; border-spacing: 0 10px;}
-.table-info td { padding: 16px 20px; background: var(--bg-body); }
-.table-info tr td:first-child { color: var(--text-muted); width: 40%; border-radius: 16px 0 0 16px; font-weight: 600;}
-.table-info tr td:last-child { font-weight: 800; text-align: right; color: var(--primary); border-radius: 0 16px 16px 0;}
+#detailNama { font-size: 1.25rem; margin-bottom: 4px; letter-spacing: -0.5px; line-height: 1.2;}
+#detailJabatanBadge { margin-bottom: 12px; display: inline-block; padding: 4px 12px;}
+
+/* TABEL INFO SUPER RAPAT */
+.table-info { 
+    width: 100%; 
+    font-size: 0.9rem; 
+    text-align: left; 
+    border-collapse: separate; 
+    border-spacing: 0 4px; /* Jarak antar baris dibikin sangat tipis */
+    margin-top: 10px;
+}
+.table-info td { 
+    padding: 10px 14px; /* Padding dipangkas agar isinya padat */
+    background: var(--bg-body); 
+}
+.table-info tr td:first-child { 
+    color: var(--text-muted); 
+    width: 35%; 
+    border-radius: 10px 0 0 10px; 
+    font-weight: 600;
+}
+.table-info tr td:last-child { 
+    font-weight: 800; 
+    text-align: right; 
+    color: var(--text-main); 
+    border-radius: 0 10px 10px 0;
+}
 
 .modal-zoom { background: rgba(15, 23, 42, 0.9); z-index: 3000; cursor: zoom-out; backdrop-filter: blur(15px);}
 .modal-zoom img { max-width: 90vw; max-height: 90vh; border-radius: 32px; box-shadow: 0 30px 80px rgba(0,0,0,0.4);}
 
-/* ========================================
-   TOAST NOTIFICATION
-======================================== */
-.toast-container { position: fixed; bottom: 32px; right: 32px; display: flex; flex-direction: column; gap: 16px; z-index: 4000; pointer-events: none; }
-.toast { background: white; padding: 24px 28px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); transform: translateX(120%); animation: toastIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; pointer-events: auto; min-width: 320px; display: flex; align-items: flex-start; gap: 18px; border-left: 6px solid var(--c-hadir);}
-.toast.error { border-left-color: var(--c-alpa); }
-.toast.hide { animation: toastOut 0.3s ease-in forwards; }
-.toast-content h4 { margin: 0 0 6px 0; font-size: 1.1rem; color: #0F172A; }
-.toast-content p { margin: 0; font-size: 0.95rem; color: var(--text-muted); font-weight: 500;}
-@keyframes toastIn { to { transform: translateX(0); } }
-@keyframes toastOut { to { transform: translateX(120%); opacity: 0; } }
-
-/* ========================================
-   RESPONSIVE DESIGN (MOBILE)
-======================================== */
-@media (max-width: 1024px) {
-    .dashboard-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 768px) {
-    .mobile-menu-btn { display: block; }
-    .nav-container { border-radius: 20px; }
-    .main-nav { 
-        display: none; position: absolute; top: 80px; left: 24px; right: 24px; 
-        background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); flex-direction: column; gap: 10px; 
-        padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border-radius: 24px; border: 1px solid rgba(255,255,255,1);
-    }
-    .main-nav.open { display: flex; }
-    .nav-link { width: 100%; text-align: center; padding: 14px; background: var(--bg-body);}
-    .nav-link.active { background: var(--primary); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.25); }
-    .btn-auth { margin: 10px 0 0 0; width: 100%; padding: 16px;}
-    
-    .stats-grid { grid-template-columns: 1fr 1fr; gap: 16px;}
-    .grid-2-cols { grid-template-columns: 1fr; gap: 0; }
-    
-    .table th { display: none; }
-    .table td { display: block; text-align: right; padding: 16px 24px; border: none;}
-    .table td:first-child { border-radius: 24px 24px 0 0; background: var(--bg-body); text-align: left;}
-    .table td:last-child { border-radius: 0 0 24px 24px; padding-bottom: 24px;}
-    .table tbody tr { display: block; margin-bottom: 20px; background: white; border-radius: 24px; box-shadow: var(--shadow-card);}
-    .siswa-cell { justify-content: flex-end; }
-}
+/* Hilangkan efek hover khusus untuk baris judul tanggal di Riwayat */
+.table tbody tr.date-separator-row:hover { transform: none; box-shadow: none; z-index: 1; }
+.table tbody tr.date-separator-row:hover td { background-color: #F8FAFC !important; }
